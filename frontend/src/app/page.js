@@ -1,58 +1,46 @@
-'use client';
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { api } from '@/lib/api';
+import Link from 'next/link';
+import styles from './landing.module.css';
 
-// Leaflet must be loaded client-side only
-const FountainMap = dynamic(() => import('@/components/FountainMap'), { ssr: false });
-
-export default function HomePage() {
-  const [fountains, setFountains] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [userLocation, setUserLocation] = useState(null);
-
-  useEffect(() => {
-    // Try to get user location for initial map center
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          setUserLocation(loc);
-          loadFountains(loc);
-        },
-        () => {
-          // Default to continental US center
-          loadFountains({ lat: 39.8, lng: -98.5 });
-        },
-        { timeout: 5000 }
-      );
-    } else {
-      loadFountains({ lat: 39.8, lng: -98.5 });
-    }
-  }, []);
-
-  const loadFountains = async (center) => {
-    try {
-      // Load fountains in a reasonable radius around the user
-      const data = await api.getFountains({
-        lat: center.lat,
-        lng: center.lng,
-        radius_m: 50000,
-        limit: 2000,
-      });
-      setFountains(data);
-    } catch (e) {
-      console.error('Failed to load fountains:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function LandingPage() {
   return (
-    <FountainMap
-      fountains={fountains}
-      center={userLocation ? [userLocation.lat, userLocation.lng] : [39.8, -98.5]}
-      zoom={userLocation ? 14 : 4}
-    />
+    <div className={styles.page}>
+      <div className={styles.content}>
+        <div className={styles.badge}>Free &amp; open source</div>
+        <h1 className={styles.title}>
+          Every public water fountain,<br />tracked and accountable.
+        </h1>
+        <p className={styles.subtitle}>
+          OpenTap makes it easy to report broken or unsafe public drinking fountains
+          and holds cities accountable for fixing them. No app to download. No account needed.
+        </p>
+        <div className={styles.actions}>
+          <Link href="/map" className={styles.primaryBtn}>
+            Explore the map
+          </Link>
+          <Link href="/report" className={styles.secondaryBtn}>
+            Report a fountain
+          </Link>
+        </div>
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>330</span>
+            <span className={styles.statLabel}>Fountains mapped</span>
+          </div>
+          <div className={styles.divider} />
+          <div className={styles.stat}>
+            <span className={styles.statNum}>2</span>
+            <span className={styles.statLabel}>Cities</span>
+          </div>
+          <div className={styles.divider} />
+          <div className={styles.stat}>
+            <span className={styles.statNum}>60s</span>
+            <span className={styles.statLabel}>To report</span>
+          </div>
+        </div>
+      </div>
+      <footer className={styles.footer}>
+        <p>No ads. No paid features. No data sales. Just clean water.</p>
+      </footer>
+    </div>
   );
 }
