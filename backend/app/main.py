@@ -44,6 +44,9 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 allowed_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://open-tap.vercel.app",
+    "https://opentapwater.com",
+    "https://www.opentapwater.com",
 ]
 # Add production domain when deployed
 # allowed_origins.append("https://opentap.org")
