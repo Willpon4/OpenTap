@@ -1,0 +1,110 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: #ffffff;
+  border-bottom: 1px solid var(--gray-200);
+  z-index: 1000;
+}
+.inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--blue-700);
+  text-decoration: none;
+}
+.logo:hover { color: var(--blue-800); text-decoration: none; }
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.navLink {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.navLink:hover {
+  background: var(--gray-50);
+  color: var(--gray-800);
+  text-decoration: none;
+}
+.reportBtn {
+  margin-left: 8px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: var(--blue-600);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.reportBtn:hover {
+  background: var(--blue-700);
+  text-decoration: none;
+  color: #ffffff;
+}
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 8px;
+}
+.menuIcon {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--gray-600);
+  position: relative;
+  transition: background 0.2s;
+}
+.menuIcon::before, .menuIcon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--gray-600);
+  transition: transform 0.2s;
+}
+.menuIcon::before { top: -6px; }
+.menuIcon::after { top: 6px; }
+.menuIconOpen { background: transparent; }
+.menuIconOpen::before { transform: rotate(45deg) translate(4px, 4px); }
+.menuIconOpen::after { transform: rotate(-45deg) translate(4px, -4px); }
+
+@media (max-width: 640px) {
+  .menuToggle { display: block; }
+  .nav {
+    display: none;
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-bottom: 1px solid var(--gray-200);
+    flex-direction: column;
+    padding: 12px 20px;
+    gap: 4px;
+  }
+  .navOpen { display: flex; }
+  .navLink { padding: 12px 14px; width: 100%; }
+  .reportBtn { margin-left: 0; text-align: center; margin-top: 4px; }
+}

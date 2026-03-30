@@ -5,15 +5,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.services import report_service
 from app.schemas.api import ReportCreate, ReportDetail, ReportSummary
+from sqlalchemy import select
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from fastapi import Request
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
 
 @router.post("", response_model=ReportSummary, status_code=201)
 async def create_report(
+    request: Request,
     data: ReportCreate,
     db: AsyncSession = Depends(get_db),
 ):
+    
+    # Rate limit: 10 reports per hour per IP
+    limiter = request.app.state.limiter
+    await limiter._check_request_limit(request, request.app, "5/hour")
+
     """Submit a new report. Creates a fountain record if fountain_id is not provided."""
     report = await report_service.create_report(db, data)
     from geoalchemy2.functions import ST_X, ST_Y
@@ -83,3 +93,52 @@ async def get_report(
             for p in report.photos
         ],
     )
+
+@router.get("")
+async def list_reports(
+    status: Optional[str] = Query(None),
+    severity: Optional[str] = Query(None),
+    issue_type: Optional[str] = Query(None),
+    city: Optional[str] = Query(None),
+    limit: int = Query(50, le=200),
+    offset: int = Query(0),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all reports, publicly visible."""
+    from geoalchemy2.functions import ST_X, ST_Y
+    from app.models.report import Report
+
+    query = (
+        select(
+            Report,
+            ST_X(Report.location).label("longitude"),
+            ST_Y(Report.location).label("latitude"),
+        )
+        .order_by(Report.reported_at.desc())
+    )
+    if status:
+        query = query.where(Report.status == status)
+    if severity:
+        query = query.where(Report.severity == severity)
+    if issue_type:
+        query = query.where(Report.issue_type == issue_type)
+    query = query.limit(limit).offset(offset)
+    if city:
+        query = query.where(Report.city.ilike(f"%{city}%"))
+
+    result = await db.execute(query)
+    rows = result.all()
+
+    return [
+        ReportSummary(
+            id=row[0].id,
+            issue_type=row[0].issue_type,
+            severity=row[0].severity,
+            status=row[0].status,
+            reporter_channel=row[0].reporter_channel,
+            reported_at=row[0].reported_at,
+            latitude=row.latitude,
+            longitude=row.longitude,
+        )
+        for row in rows
+    ]

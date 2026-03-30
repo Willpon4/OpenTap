@@ -1,0 +1,107 @@
+/* Login */
+.loginPage {
+  min-height: calc(100vh - var(--header-height));
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gray-50); padding: 20px;
+}
+.loginCard {
+  width: 100%; max-width: 380px;
+  background: #ffffff; border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.loginCard h1 { font-size: 1.3rem; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
+.loginCard p { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 20px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--gray-700); margin-bottom: 5px; }
+.field input {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--gray-300); border-radius: var(--radius-sm);
+  font-size: 0.9rem; color: var(--gray-800);
+}
+.field input:focus { outline: none; border-color: var(--blue-400); box-shadow: 0 0 0 3px var(--blue-50); }
+.loginBtn {
+  width: 100%; padding: 11px;
+  background: var(--blue-600); color: #ffffff; border: none;
+  border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500;
+  margin-top: 6px; transition: background 0.15s;
+}
+.loginBtn:hover { background: var(--blue-700); }
+.error {
+  padding: 10px 12px; background: var(--red-light); color: var(--red-dark);
+  border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 14px;
+}
+
+/* Dashboard */
+.dashboard {
+  max-width: var(--max-width); margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+.dashHeader {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px;
+}
+.dashHeader h1 { font-size: 1.4rem; font-weight: 600; color: var(--gray-900); }
+.dashHeader p { font-size: 0.9rem; color: var(--gray-500); }
+.logoutBtn {
+  padding: 8px 16px; background: none; border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--gray-600);
+  transition: all 0.15s;
+}
+.logoutBtn:hover { background: var(--gray-50); border-color: var(--gray-400); }
+
+.statGrid {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 12px; margin-bottom: 32px;
+}
+.statCard {
+  background: var(--gray-50); border-radius: var(--radius-md);
+  padding: 16px; text-align: center;
+}
+.statNum { display: block; font-size: 1.5rem; font-weight: 600; color: var(--gray-900); }
+.statLabel { display: block; font-size: 0.75rem; color: var(--gray-500); margin-top: 2px; }
+
+.reportsSection { }
+.reportsHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.reportsHeader h2 { font-size: 1.1rem; font-weight: 600; color: var(--gray-800); }
+.filters { display: flex; gap: 4px; flex-wrap: wrap; }
+.filterBtn {
+  padding: 6px 12px; background: none; border: 1px solid var(--gray-200);
+  border-radius: 100px; font-size: 0.8rem; color: var(--gray-500);
+  transition: all 0.15s;
+}
+.filterBtn:hover { border-color: var(--gray-400); color: var(--gray-700); }
+.filterActive { background: var(--blue-50); border-color: var(--blue-300); color: var(--blue-700); font-weight: 500; }
+
+.reportList { display: flex; flex-direction: column; gap: 6px; }
+.reportRow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: #ffffff;
+  border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+  gap: 12px; flex-wrap: wrap;
+}
+.reportMain { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.reportType { font-size: 0.9rem; font-weight: 500; color: var(--gray-800); }
+.highSev {
+  font-size: 0.75rem; padding: 2px 8px; background: var(--red-light);
+  color: var(--red-dark); border-radius: 100px; font-weight: 500;
+}
+.reportDate { font-size: 0.8rem; color: var(--gray-400); }
+.reportChannel { font-size: 0.75rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.3px; }
+.reportActions { display: flex; gap: 6px; }
+.actionBtn {
+  padding: 5px 12px; background: none; border: 1px solid var(--blue-300);
+  border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--blue-600);
+  transition: all 0.15s;
+}
+.actionBtn:hover { background: var(--blue-50); }
+
+.empty { padding: 40px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
+
+@media (max-width: 768px) {
+  .statGrid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 480px) {
+  .statGrid { grid-template-columns: repeat(2, 1fr); }
+  .reportRow { flex-direction: column; align-items: flex-start; }
+}

@@ -1,0 +1,142 @@
+/* OpenTap — clean, calm, accessible */
+
+:root {
+  /* Primary — soft water blue */
+  --blue-50: #f0f7fb;
+  --blue-100: #dceef7;
+  --blue-200: #b8ddef;
+  --blue-300: #7fc4e0;
+  --blue-400: #4aa8cc;
+  --blue-500: #2b8db5;
+  --blue-600: #1d7198;
+  --blue-700: #195c7c;
+  --blue-800: #184d67;
+  --blue-900: #194157;
+
+  /* Teal — for accents */
+  --teal-50: #eef8f5;
+  --teal-100: #d5efe8;
+  --teal-500: #2a9d7e;
+  --teal-600: #1f7d64;
+  --teal-700: #1b6553;
+
+  /* Warm grays — text and backgrounds */
+  --gray-50: #f9f9f7;
+  --gray-100: #f2f2ef;
+  --gray-200: #e6e5e1;
+  --gray-300: #d4d3cf;
+  --gray-400: #a8a7a2;
+  --gray-500: #7c7b77;
+  --gray-600: #5e5d5a;
+  --gray-700: #434240;
+  --gray-800: #2c2b29;
+  --gray-900: #1a1918;
+
+  /* Status colors — muted, not fluorescent */
+  --green-light: #e8f5e9;
+  --green: #4a9b5a;
+  --green-dark: #357a43;
+
+  --yellow-light: #fef9e7;
+  --yellow: #c9a227;
+  --yellow-dark: #9a7c1e;
+
+  --red-light: #fce8e8;
+  --red: #c45454;
+  --red-dark: #963f3f;
+
+  --orange-light: #fef0e4;
+  --orange: #c47a3a;
+
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Shadows — very subtle */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  color: var(--gray-800);
+  background: #ffffff;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--blue-600);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--blue-700);
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Utility classes */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.status-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.status-working { background: var(--green-light); color: var(--green-dark); }
+.status-working::before { background: var(--green); }
+.status-issue { background: var(--yellow-light); color: var(--yellow-dark); }
+.status-issue::before { background: var(--yellow); }
+.status-broken { background: var(--red-light); color: var(--red-dark); }
+.status-broken::before { background: var(--red); }
+.status-unknown { background: #e8f4f9; color: #1d7198; }
+.status-unknown::before { background: #4aa8cc; }
+.status-reported { background: var(--orange-light); color: var(--orange); }
+.status-reported::before { background: var(--orange); }
+.status-stale { background: var(--red-light); color: var(--red-dark); }
+.status-stale::before { background: var(--red); }
+.status-resolved { background: var(--green-light); color: var(--green-dark); }
+.status-resolved::before { background: var(--green); }

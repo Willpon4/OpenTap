@@ -10,6 +10,8 @@ from app.models.supporting import StatusHistory
 from app.models.fountain import Fountain
 from app.services.fountain_service import create_fountain_from_report
 from app.schemas.api import ReportCreate
+import httpx
+from app.core.sanitize import sanitize_text, sanitize_contact
 
 
 async def create_report(db: AsyncSession, data: ReportCreate) -> Report:
@@ -28,14 +30,22 @@ async def create_report(db: AsyncSession, data: ReportCreate) -> Report:
             .values(status="issue", updated_at=datetime.now(timezone.utc))
         )
 
+    # Sanitize inputs
+    clean_description = sanitize_text(data.description) if data.description else None
+    clean_contact = sanitize_contact(data.reporter_contact) if data.reporter_contact else None
+    encrypted_contact = encrypt_contact(clean_contact) if clean_contact else None
+
+    city = await reverse_geocode_city(data.latitude, data.longitude)
+
     report = Report(
         fountain_id=fountain_id,
         location=f"SRID=4326;POINT({data.longitude} {data.latitude})",
         issue_type=data.issue_type,
         severity=data.severity,
-        description=data.description,
-        reporter_contact=data.reporter_contact,
+        description=clean_description,
+        reporter_contact=encrypted_contact,
         reporter_channel=data.reporter_channel,
+        city=city,
         status="reported",
         reported_at=datetime.now(timezone.utc),
     )
@@ -54,6 +64,25 @@ async def create_report(db: AsyncSession, data: ReportCreate) -> Report:
 
     return report
 
+async def reverse_geocode_city(lat: float, lng: float) -> str:
+    """Get city name from coordinates using OpenStreetMap Nominatim."""
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                "https://nominatim.openstreetmap.org/reverse",
+                params={"lat": lat, "lon": lng, "format": "json", "zoom": 10},
+                headers={"User-Agent": "OpenTap/0.1"},
+                timeout=5,
+            )
+            data = resp.json()
+            address = data.get("address", {})
+            city = address.get("city") or address.get("town") or address.get("village") or address.get("county", "")
+            state = address.get("state", "")
+            if city and state:
+                return f"{city}, {state}"
+            return city or "Unknown"
+    except Exception:
+        return "Unknown"
 
 async def get_report_detail(db: AsyncSession, report_id: UUID) -> Optional[dict]:
     """Get a report with full status history and photos."""

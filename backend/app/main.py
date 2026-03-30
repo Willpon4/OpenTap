@@ -1,6 +1,10 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from app.core.config import get_settings
 from app.api.v1.fountains import router as fountains_router
 from app.api.v1.reports import router as reports_router
@@ -8,14 +12,14 @@ from app.api.v1.admin import router as admin_router, internal_router
 
 settings = get_settings()
 
+limiter = Limiter(key_func=get_remote_address)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     from app.core.database import init_db
     await init_db()
     yield
-    # Shutdown (cleanup if needed)
 
 
 app = FastAPI(
@@ -25,12 +29,30 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow all origins for public API, tighten in production
+app.state.limiter = limiter
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Too many requests. Please try again later."},
+    )
+
+
+# CORS — restrict to known origins
+allowed_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+# Add production domain when deployed
+# allowed_origins.append("https://opentap.org")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
     allow_headers=["*"],
 )
 

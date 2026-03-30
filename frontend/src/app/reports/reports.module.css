@@ -1,0 +1,71 @@
+.page { padding: 32px 20px 80px; background: var(--gray-50); min-height: calc(100vh - var(--header-height)); }
+.container { max-width: 800px; margin: 0 auto; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.header h1 { font-size: 1.4rem; font-weight: 600; color: var(--gray-900); }
+.header p { font-size: 0.85rem; color: var(--gray-500); margin-top: 2px; }
+.reportBtn {
+  padding: 8px 18px; background: var(--blue-600); color: #ffffff;
+  border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 500;
+  text-decoration: none; white-space: nowrap;
+}
+.reportBtn:hover { background: var(--blue-700); text-decoration: none; color: #ffffff; }
+.searchBar { display: flex; gap: 8px; margin-bottom: 16px; }
+.searchInput {
+  flex: 1; padding: 10px 14px;
+  border: 1px solid var(--gray-300); border-radius: var(--radius-sm);
+  font-size: 0.9rem; color: var(--gray-800);
+}
+.searchInput:focus { outline: none; border-color: var(--blue-400); box-shadow: 0 0 0 3px var(--blue-50); }
+.searchBtn {
+  padding: 10px 18px; background: var(--blue-600); color: #ffffff;
+  border: none; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 500;
+}
+.searchBtn:hover { background: var(--blue-700); }
+.clearBtn {
+  padding: 10px 14px; background: none; border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--gray-500);
+}
+.clearBtn:hover { background: var(--gray-50); }
+
+.filters { margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+.filterGroup { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.filterLabel { font-size: 0.75rem; color: var(--gray-500); min-width: 44px; font-weight: 500; }
+.filterBtn {
+  padding: 5px 12px; background: none; border: 1px solid var(--gray-200);
+  border-radius: 100px; font-size: 0.78rem; color: var(--gray-500); transition: all 0.15s;
+}
+.filterBtn:hover { border-color: var(--gray-400); color: var(--gray-700); }
+.filterActive { background: var(--blue-50); border-color: var(--blue-300); color: var(--blue-700); font-weight: 500; }
+
+.loading, .empty { padding: 60px 20px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
+.empty a { color: var(--blue-600); display: block; margin-top: 8px; }
+
+.list { display: flex; flex-direction: column; gap: 8px; }
+.card {
+  display: block; padding: 16px 18px;
+  background: #ffffff; border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md); text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.card:hover { border-color: var(--blue-300); box-shadow: var(--shadow-sm); text-decoration: none; }
+
+.cardTop { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.highSev {
+  font-size: 0.72rem; padding: 2px 8px; background: var(--red-light);
+  color: var(--red-dark); border-radius: 100px; font-weight: 500;
+}
+.time { font-size: 0.78rem; color: var(--gray-400); margin-left: auto; }
+
+.cardBody { margin-bottom: 8px; }
+.issueType { font-size: 0.95rem; font-weight: 500; color: var(--gray-800); }
+.coords { font-size: 0.8rem; color: var(--gray-400); margin-left: 10px; }
+
+.cardFooter { display: flex; justify-content: space-between; align-items: center; }
+.channel { font-size: 0.75rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.3px; }
+.viewLink { font-size: 0.8rem; color: var(--blue-600); font-weight: 500; }
+
+@media (max-width: 480px) {
+  .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .coords { display: block; margin-left: 0; margin-top: 2px; }
+}

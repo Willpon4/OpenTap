@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 from geoalchemy2 import Geometry
 from app.core.database import Base
 
-
 class Report(Base):
     __tablename__ = "reports"
 
@@ -19,6 +18,7 @@ class Report(Base):
     status = Column(String(20), nullable=False, default="reported")  # reported, acknowledged, in_progress, resolved, stale
     reporter_contact = Column(String(255), nullable=True)  # encrypted email or phone
     reporter_channel = Column(String(10), nullable=False, default="web")  # web, sms, qr
+    city = Column(String(255), nullable=True)
 
     # Lifecycle timestamps
     reported_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
