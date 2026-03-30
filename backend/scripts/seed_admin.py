@@ -10,7 +10,9 @@ import asyncio
 from sqlalchemy import select
 from app.core.database import engine, async_session, init_db
 from app.core.auth import hash_password
-from app.models.supporting import AdminUser
+from app.models.fountain import Fountain
+from app.models.report import Report
+from app.models.supporting import AdminUser, StatusHistory, ReportPhoto, CityBoundary
 
 
 async def create_admin(email: str, password: str, name: str):

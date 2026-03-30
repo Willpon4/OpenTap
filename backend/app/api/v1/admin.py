@@ -25,12 +25,7 @@ settings = get_settings()
 
 
 @router.post("/auth/login", response_model=AdminLoginResponse)
-async def login(request: Request, data: AdminLogin, db: AsyncSession = Depends(get_db)):
-    """Authenticate admin user and return JWT."""
-
-    # Rate limit: 5 login attempts per 15 minutes per IP
-    limiter = request.app.state.limiter
-    await limiter._check_request_limit(request, request.app, "5/15minutes")
+async def login(data: AdminLogin, db: AsyncSession = Depends(get_db)):
     
     result = await db.execute(select(AdminUser).where(AdminUser.email == data.email))
     user = result.scalar_one_or_none()

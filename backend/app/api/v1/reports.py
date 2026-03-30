@@ -15,14 +15,9 @@ router = APIRouter(prefix="/reports", tags=["reports"])
 
 @router.post("", response_model=ReportSummary, status_code=201)
 async def create_report(
-    request: Request,
     data: ReportCreate,
     db: AsyncSession = Depends(get_db),
 ):
-    
-    # Rate limit: 10 reports per hour per IP
-    limiter = request.app.state.limiter
-    await limiter._check_request_limit(request, request.app, "5/hour")
 
     """Submit a new report. Creates a fountain record if fountain_id is not provided."""
     report = await report_service.create_report(db, data)

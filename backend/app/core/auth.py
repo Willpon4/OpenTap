@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.config import get_settings
 from app.core.database import get_db
+from app.models.supporting import AdminUser
 
 settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -49,7 +50,7 @@ async def get_current_admin(
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-    from app.models.admin_user import AdminUser
+    from app.models.supporting import AdminUser
     result = await db.execute(select(AdminUser).where(AdminUser.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
