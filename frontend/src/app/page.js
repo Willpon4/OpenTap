@@ -1,7 +1,26 @@
+'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './landing.module.css';
 
 export default function LandingPage() {
+  const [stats, setStats] = useState({ fountain_count: 0, city_count: 0, report_count: 0 });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/fountains/stats/summary`);
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (e) {
+        console.error('Failed to load stats:', e);
+      }
+    };
+    loadStats();
+  }, []);
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
@@ -23,12 +42,12 @@ export default function LandingPage() {
         </div>
         <div className={styles.stats}>
           <div className={styles.stat}>
-            <span className={styles.statNum}>330</span>
+            <span className={styles.statNum}>{stats.fountain_count}</span>
             <span className={styles.statLabel}>Fountains mapped</span>
           </div>
           <div className={styles.divider} />
           <div className={styles.stat}>
-            <span className={styles.statNum}>2</span>
+            <span className={styles.statNum}>{stats.city_count}</span>
             <span className={styles.statLabel}>Cities</span>
           </div>
           <div className={styles.divider} />

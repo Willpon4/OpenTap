@@ -62,3 +62,22 @@ async def get_fountain(
     if not fountain:
         raise HTTPException(404, "Fountain not found")
     return fountain
+
+@router.get("/stats/summary")
+async def get_summary_stats(db: AsyncSession = Depends(get_db)):
+    """Public summary stats for the landing page."""
+    from sqlalchemy import func, select
+    from app.models.fountain import Fountain
+    from app.models.report import Report
+
+    fountain_count = await db.execute(select(func.count(Fountain.id)))
+    report_count = await db.execute(select(func.count(Report.id)))
+    city_count = await db.execute(
+        select(func.count(func.distinct(Report.city))).where(Report.city.isnot(None))
+    )
+
+    return {
+        "fountain_count": fountain_count.scalar() or 0,
+        "report_count": report_count.scalar() or 0,
+        "city_count": city_count.scalar() or 0,
+    }
