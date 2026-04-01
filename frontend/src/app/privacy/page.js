@@ -125,4 +125,28 @@ export default function PrivacyPage() {
 
           <h3>No warranties</h3>
           <p>
-            OpenTap is provided &ldquo
+            OpenTap is provided &ldquo;as is&rdquo; without warranties of any kind, either
+            express or implied. We do not warrant that the platform will be available at all
+            times, error-free, or that defects will be corrected.
+          </p>
+
+          <h3>Open source</h3>
+          <p>
+            OpenTap is open source software released under the MIT License. The source code
+            is available on GitHub. You are free to use, modify, and distribute the code
+            under the terms of that license.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Contact</h2>
+          <p>
+            If you have questions about this privacy policy or how your data is handled,
+            you can reach us through our GitHub repository or by submitting a report through
+            the platform with your contact information.
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}
