@@ -9,6 +9,7 @@ from sqlalchemy import select
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from fastapi import Request
+from fastapi import UploadFile, File, HTTPException
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
@@ -42,19 +43,21 @@ async def create_report(
         longitude=coords[0],
     )
 
-@router.get("/upload-url")
-async def get_upload_url(
-    content_type: str = Query("image/jpeg"),
-):
-    """Get a pre-signed URL to upload a photo directly to R2."""
-    from app.services.storage_service import generate_presigned_upload_url
+@router.post("/upload-photo")
+async def upload_photo(file: UploadFile = File(...)):
+    """Upload a photo and store it in R2."""
+    from app.services.storage_service import upload_file_to_r2
 
     allowed_types = ["image/jpeg", "image/png", "image/webp"]
-    if content_type not in allowed_types:
-        from fastapi import HTTPException
+    if file.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Only JPEG, PNG, and WebP images are allowed.")
 
-    return generate_presigned_upload_url(content_type=content_type)
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large. Maximum 5MB.")
+
+    result = upload_file_to_r2(contents, file.content_type)
+    return result
 
 @router.get("/{report_id}")
 async def get_report(

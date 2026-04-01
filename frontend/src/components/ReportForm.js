@@ -361,21 +361,15 @@ export default function ReportForm() {
                   try {
                     let photoUrl = null;
                     if (photoFile) {
-                      // Get pre-signed URL
-                      const urlRes = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports/upload-url?content_type=${encodeURIComponent(photoFile.type || 'image/jpeg')}`
+                      const formData = new FormData();
+                      formData.append('file', photoFile);
+                      const uploadRes = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports/upload-photo`,
+                        { method: 'POST', body: formData }
                       );
-                      if (!urlRes.ok) throw new Error('Could not get upload URL');
-                      const { upload_url, public_url } = await urlRes.json();
-
-                      // Upload directly to R2
-                      const uploadRes = await fetch(upload_url, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': photoFile.type || 'image/jpeg' },
-                        body: photoFile,
-                      });
                       if (!uploadRes.ok) throw new Error('Photo upload failed');
-                      photoUrl = public_url;
+                      const { photo_url } = await uploadRes.json();
+                      photoUrl = photo_url;
                     }
 
                     // Submit report

@@ -17,27 +17,23 @@ def get_r2_client():
     )
 
 
-def generate_presigned_upload_url(report_id: str = None, content_type: str = "image/jpeg"):
-    """Generate a pre-signed URL for direct browser upload to R2."""
+def upload_file_to_r2(file_bytes: bytes, content_type: str = "image/jpeg"):
+    """Upload a file directly to R2 from the backend."""
     client = get_r2_client()
     file_id = uuid.uuid4().hex[:12]
-    prefix = f"reports/{report_id}" if report_id else "uploads"
-    key = f"{prefix}/{file_id}.jpg"
+    ext = "jpg" if "jpeg" in content_type else content_type.split("/")[-1]
+    key = f"photos/{file_id}.{ext}"
 
-    url = client.generate_presigned_url(
-        "put_object",
-        Params={
-            "Bucket": settings.R2_BUCKET_NAME,
-            "Key": key,
-            "ContentType": content_type,
-        },
-        ExpiresIn=600,  # 10 minutes
+    client.put_object(
+        Bucket=settings.R2_BUCKET_NAME,
+        Key=key,
+        Body=file_bytes,
+        ContentType=content_type,
     )
 
     public_url = f"{settings.R2_PUBLIC_URL}/{key}"
 
     return {
-        "upload_url": url,
-        "public_url": public_url,
+        "photo_url": public_url,
         "key": key,
     }

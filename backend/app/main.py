@@ -81,12 +81,3 @@ async def root():
 async def health():
     return {"status": "ok"}
 
-@app.get("/debug/config")
-async def debug_config():
-    import os
-    return {
-        "r2_endpoint_url": os.environ.get("R2_ENDPOINT_URL", "NOT SET"),
-        "r2_account_id": os.environ.get("R2_ACCOUNT_ID", "NOT SET"),
-        "r2_bucket": os.environ.get("R2_BUCKET_NAME", "NOT SET"),
-        "all_r2_keys": [k for k in os.environ.keys() if "R2" in k.upper()],
-    }
