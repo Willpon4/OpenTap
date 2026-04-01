@@ -94,7 +94,7 @@ export default function AboutPage() {
             just someone who cares — there&apos;s a way to help.
           </p>
           <div className={styles.links}>
-            <a href="https://github.com" className={styles.linkCard} target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/Willpon4/OpenTap" className={styles.linkCard} target="_blank" rel="noopener noreferrer">
               <h3>Contribute code</h3>
               <p>Check out our GitHub repo for open issues and contribution guidelines.</p>
             </a>
