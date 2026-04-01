@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import styles from './ReportForm.module.css';
+import imageCompression from 'browser-image-compression';
 
 const ISSUE_TYPES = [
   { value: 'broken', label: 'Broken or not working', desc: 'No water comes out at all' },
@@ -22,6 +23,9 @@ export default function ReportForm() {
   const [submitted, setSubmitted] = useState(false);
   const [reportId, setReportId] = useState(null);
   const [error, setError] = useState('');
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const [form, setForm] = useState({
     latitude: parseFloat(searchParams.get('lat')) || null,
@@ -263,37 +267,132 @@ export default function ReportForm() {
         {/* Step 3: Optional details + submit */}
         {step === 3 && (
           <div className={styles.stepContent}>
-            <h2 className={styles.stepTitle}>Anything else? (optional)</h2>
+            <h2 className={styles.stepTitle}>Additional details</h2>
 
-            <div className={styles.field}>
-              <label className={styles.label}>Additional details</label>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Photo</label>
+              <p className={styles.hint}>Reports with photos are resolved faster.</p>
+
+              {!photoPreview ? (
+                <div>
+                  <label className={styles.photoUploadBtn}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    Add a photo
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      style={{ display: 'none' }}
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        try {
+                          const compressed = await imageCompression(file, {
+                            maxSizeMB: 0.3,
+                            maxWidthOrHeight: 1920,
+                            useWebWorker: true,
+                          });
+                          setPhotoFile(compressed);
+                          setPhotoPreview(URL.createObjectURL(compressed));
+                        } catch (err) {
+                          console.error('Compression failed:', err);
+                          setError('Could not process that image. Try a different photo.');
+                        }
+                      }}
+                    />
+                  </label>
+                  <div className={styles.photoTips}>
+                    <span>Tips for a good photo:</span>
+                    <span>Press the button so we can see the water flow</span>
+                    <span>Include the full fountain in the frame</span>
+                    <span>Show the surrounding area so we can find it</span>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.photoPreview}>
+                  <img src={photoPreview} alt="Preview" />
+                  <button
+                    type="button"
+                    className={styles.photoRemove}
+                    onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
+                  >
+                    Remove photo
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Description (optional)</label>
               <textarea
+                placeholder="Any details that might help — what's wrong, how long it's been like this..."
                 className={styles.textarea}
-                placeholder="Describe the problem in more detail..."
-                rows={3}
-                value={form.description}
+                value={form.description || ''}
                 onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
+                rows={3}
               />
             </div>
 
-            <div className={styles.field}>
-              <label className={styles.label}>Your email or phone (optional)</label>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Email or phone (optional)</label>
+              <p className={styles.hint}>We&apos;ll notify you when the status changes. Encrypted and never shared.</p>
               <input
                 type="text"
+                placeholder="email@example.com or +1 555-123-4567"
                 className={styles.input}
-                placeholder="For updates on your report — never shared publicly"
-                value={form.reporter_contact}
+                value={form.reporter_contact || ''}
                 onChange={(e) => setForm(f => ({ ...f, reporter_contact: e.target.value }))}
               />
-              <span className={styles.hint}>We&apos;ll only use this to notify you when the status changes.</span>
             </div>
 
             {error && <div className={styles.error}>{error}</div>}
 
-            <div className={styles.btnRow}>
-              <button className={styles.btnSecondary} onClick={() => setStep(2)}>Back</button>
-              <button className={styles.btnPrimary} onClick={handleSubmit} disabled={submitting}>
-                {submitting ? 'Submitting...' : 'Submit report'}
+            <div className={styles.stepActions}>
+              <button onClick={() => { setError(''); setStep(2); }} className={styles.btnBack}>Back</button>
+              <button
+                className={styles.btnPrimary}
+                disabled={uploading}
+                onClick={async () => {
+                  setError('');
+                  setUploading(true);
+                  try {
+                    let photoUrl = null;
+                    if (photoFile) {
+                      // Get pre-signed URL
+                      const urlRes = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports/upload-url?content_type=${encodeURIComponent(photoFile.type || 'image/jpeg')}`
+                      );
+                      if (!urlRes.ok) throw new Error('Could not get upload URL');
+                      const { upload_url, public_url } = await urlRes.json();
+
+                      // Upload directly to R2
+                      const uploadRes = await fetch(upload_url, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': photoFile.type || 'image/jpeg' },
+                        body: photoFile,
+                      });
+                      if (!uploadRes.ok) throw new Error('Photo upload failed');
+                      photoUrl = public_url;
+                    }
+
+                    // Submit report
+                    const reportData = { ...form };
+                    if (photoUrl) reportData.photo_url = photoUrl;
+                    const report = await api.createReport(reportData);
+                    setReportId(report.id);
+                    setSubmitted(true);
+                  } catch (err) {
+                    console.error('Submit error:', err);
+                    setError(err.message || 'Failed to submit report. Please try again.');
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+              >
+                {uploading ? 'Submitting...' : 'Submit report'}
               </button>
             </div>
           </div>
