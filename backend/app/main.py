@@ -80,3 +80,13 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+@app.get("/debug/config")
+async def debug_config():
+    from app.core.config import get_settings
+    s = get_settings()
+    return {
+        "r2_endpoint_url": s.R2_ENDPOINT_URL[:20] + "..." if s.R2_ENDPOINT_URL else "EMPTY",
+        "r2_bucket": s.R2_BUCKET_NAME,
+        "r2_account_id": s.R2_ACCOUNT_ID[:6] + "..." if s.R2_ACCOUNT_ID else "EMPTY",
+    }
