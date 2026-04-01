@@ -110,6 +110,9 @@ export default function AboutPage() {
             The ultimate measure of success: did a real person get access to clean drinking
             water that they would not have had without this platform?
           </p>
+          <p style={{ marginTop: '12px' }}>
+            <a href="/privacy" style={{ fontSize: '0.82rem', color: '#a8a7a2' }}>Privacy policy & terms of use</a>
+          </p>
         </footer>
       </div>
     </div>
