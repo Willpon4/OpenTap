@@ -42,7 +42,7 @@ async def create_report(
         longitude=coords[0],
     )
 
-@router.post("/upload-url")
+@router.get("/upload-url")
 async def get_upload_url(
     content_type: str = Query("image/jpeg"),
 ):
