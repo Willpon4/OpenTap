@@ -20,6 +20,7 @@ export default function Header() {
           <Link href="/map" className={styles.navLink} onClick={() => setMenuOpen(false)}>Map</Link>
           <Link href="/reports" className={styles.navLink} onClick={() => setMenuOpen(false)}>Feed</Link>
           <Link href="/about" className={styles.navLink} onClick={() => setMenuOpen(false)}>About</Link>
+          <Link href="/contact" className={styles.navLink} onClick={() => setMenuOpen(false)}>Contact</Link>
           <Link href="/report" className={styles.reportBtn} onClick={() => setMenuOpen(false)}>
             Report a problem
           </Link>
