@@ -43,6 +43,7 @@ class ReportCreate(BaseModel):
     description: Optional[str] = Field(None, max_length=2000)
     reporter_contact: Optional[str] = Field(None, max_length=255)
     photo_url: Optional[str] = None
+    reporter_channel: str = Field("web", pattern="^(web|sms|qr)$")
 
 
 class ReportSummary(BaseModel):
