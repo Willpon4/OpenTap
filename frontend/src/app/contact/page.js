@@ -23,7 +23,7 @@ export default function ContactPage() {
               for city staff to manage fountain reports. No cost, no contracts, no strings attached.
             </p>
             <a href="mailto:ponczawm@dukes.jmu.edu" className={styles.cardLink}>
-              opentapwater@gmail.com
+              ponczawm@dukes.jmu.edu
             </a>
           </div>
 
@@ -33,7 +33,7 @@ export default function ContactPage() {
               Questions, feedback, ideas, or just want to say hello. We read every message.
             </p>
             <a href="mailto:ponczawm@dukes.jmu.edu" className={styles.cardLink}>
-              opentapwater@gmail.com
+              ponczawm@dukes.jmu.edu
             </a>
           </div>
 
