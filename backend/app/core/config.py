@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     # Internal API key
     INTERNAL_API_KEY: str = "change-me-internal-key"
 
+    # resend
+    RESEND_API_KEY: str = ""
+
 
 @lru_cache()
 def get_settings() -> Settings:

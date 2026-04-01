@@ -173,6 +173,11 @@ async def update_status(
     )
     if not report:
         raise HTTPException(404, "Report not found or invalid status transition")
+
+    # Send email notification to reporter
+    from app.services.notification_service import send_notification
+    await send_notification(report.reporter_contact, data.status, str(report.id))
+
     return {"status": report.status, "updated": True}
 
 
