@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     # Internal API key for cron jobs / data imports
     INTERNAL_API_KEY: str = "change-me-internal-key"
 
+    # Cloudfare
+    R2_ACCOUNT_ID: str = ""
+    R2_ACCESS_KEY_ID: str = ""
+    R2_SECRET_ACCESS_KEY: str = ""
+    R2_BUCKET_NAME: str = "opentap-photos"
+    R2_PUBLIC_URL: str = ""
+    R2_ENDPOINT_URL: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = True

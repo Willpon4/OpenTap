@@ -33,6 +33,9 @@ class Report(Base):
     status_history = relationship("StatusHistory", back_populates="report", order_by="StatusHistory.changed_at")
     photos = relationship("ReportPhoto", back_populates="report")
 
+    # Cloud fare
+    photo_url = Column(String(500), nullable=True)
+
     __table_args__ = (
         Index("ix_reports_location", location, postgresql_using="gist"),
         Index("ix_reports_status", status),

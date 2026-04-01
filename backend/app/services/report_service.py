@@ -48,6 +48,7 @@ async def create_report(db: AsyncSession, data: ReportCreate) -> Report:
         city=city,
         status="reported",
         reported_at=datetime.now(timezone.utc),
+        photo_url=data.photo_url,
     )
     db.add(report)
     await db.flush()

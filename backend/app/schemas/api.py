@@ -42,7 +42,7 @@ class ReportCreate(BaseModel):
     severity: str = Field("low", pattern="^(low|high)$")
     description: Optional[str] = Field(None, max_length=2000)
     reporter_contact: Optional[str] = Field(None, max_length=255)
-    reporter_channel: str = Field("web", pattern="^(web|sms|qr)$")
+    photo_url: Optional[str] = None
 
 
 class ReportSummary(BaseModel):
@@ -54,6 +54,7 @@ class ReportSummary(BaseModel):
     reported_at: datetime
     latitude: float
     longitude: float
+    photo_url: Optional[str] = None
 
     class Config:
         from_attributes = True

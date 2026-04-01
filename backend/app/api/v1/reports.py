@@ -137,3 +137,17 @@ async def list_reports(
         )
         for row in rows
     ]
+
+@router.post("/upload-url")
+async def get_upload_url(
+    content_type: str = Query("image/jpeg"),
+):
+    """Get a pre-signed URL to upload a photo directly to R2."""
+    from app.services.storage_service import generate_presigned_upload_url
+
+    allowed_types = ["image/jpeg", "image/png", "image/webp"]
+    if content_type not in allowed_types:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="Only JPEG, PNG, and WebP images are allowed.")
+
+    return generate_presigned_upload_url(content_type=content_type)
