@@ -228,6 +228,26 @@
   margin-top: -2px;
 }
 
+.stepActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.btnBack {
+  padding: 10px 24px;
+  background: #ffffff;
+  color: var(--gray-600);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnBack:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
 .successIcon { color: var(--green); margin-bottom: 16px; }
 .success h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
 .success p { color: var(--gray-500); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5; }
