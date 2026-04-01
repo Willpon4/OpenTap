@@ -72,12 +72,20 @@ async def get_summary_stats(db: AsyncSession = Depends(get_db)):
 
     fountain_count = await db.execute(select(func.count(Fountain.id)))
     report_count = await db.execute(select(func.count(Report.id)))
-    city_count = await db.execute(
+
+    # Count cities from both fountains and reports
+    fountain_cities = await db.execute(
+        select(func.count(func.distinct(Fountain.city))).where(Fountain.city.isnot(None))
+    )
+    report_cities = await db.execute(
         select(func.count(func.distinct(Report.city))).where(Report.city.isnot(None))
     )
+
+    # Use whichever is higher, or combine
+    city_count = max(fountain_cities.scalar() or 0, report_cities.scalar() or 0)
 
     return {
         "fountain_count": fountain_count.scalar() or 0,
         "report_count": report_count.scalar() or 0,
-        "city_count": city_count.scalar() or 0,
+        "city_count": city_count if city_count > 0 else 1,
     }
