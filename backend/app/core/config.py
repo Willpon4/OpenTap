@@ -1,9 +1,15 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore",
+    )
+
     # App
     APP_NAME: str = "OpenTap"
     APP_VERSION: str = "0.1.0"
@@ -16,32 +22,10 @@ class Settings(BaseSettings):
 
     # Auth
     SECRET_KEY: str = "change-me-in-production-use-openssl-rand-hex-32"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 480  # 8 hours
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 480
     ALGORITHM: str = "HS256"
 
-    # SMS (Twilio)
-    TWILIO_ACCOUNT_SID: str = ""
-    TWILIO_AUTH_TOKEN: str = ""
-    TWILIO_PHONE_NUMBER: str = ""
-
-    # Photo storage (Cloudflare R2 / S3-compatible)
-    STORAGE_ENDPOINT: str = ""
-    STORAGE_ACCESS_KEY: str = ""
-    STORAGE_SECRET_KEY: str = ""
-    STORAGE_BUCKET: str = "opentap-photos"
-    STORAGE_PUBLIC_URL: str = ""
-
-    # Rate limiting
-    RATE_LIMIT_REPORTS_PER_HOUR: int = 10
-    RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
-
-    # Report lifecycle
-    STALE_THRESHOLD_DAYS: int = 14  # days before unacknowledged report goes stale
-
-    # Internal API key for cron jobs / data imports
-    INTERNAL_API_KEY: str = "change-me-internal-key"
-
-    # Cloudfare
+    # Cloudflare R2
     R2_ACCOUNT_ID: str = ""
     R2_ACCESS_KEY_ID: str = ""
     R2_SECRET_ACCESS_KEY: str = ""
@@ -49,9 +33,15 @@ class Settings(BaseSettings):
     R2_PUBLIC_URL: str = ""
     R2_ENDPOINT_URL: str = ""
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Rate limiting
+    RATE_LIMIT_REPORTS_PER_HOUR: int = 10
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
+
+    # Report lifecycle
+    STALE_THRESHOLD_DAYS: int = 14
+
+    # Internal API key
+    INTERNAL_API_KEY: str = "change-me-internal-key"
 
 
 @lru_cache()
