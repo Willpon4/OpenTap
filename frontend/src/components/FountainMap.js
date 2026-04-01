@@ -43,6 +43,9 @@ export default function FountainMap({ fountains = [], center = [39.8, -98.5], zo
         zoom,
         zoomControl: true,
         attributionControl: true,
+        minZoom: 3,
+        maxBounds: [[-85, -180], [85, 180]],
+        maxBoundsViscosity: 1.0,
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
