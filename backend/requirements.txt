@@ -16,4 +16,4 @@ bleach==6.2.0
 cryptography==44.0.0
 python-dotenv==1.0.1
 boto3==1.35.0
-# force deploy
+python-multipart==0.0.18
