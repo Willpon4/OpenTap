@@ -164,7 +164,7 @@ export default function ReportForm() {
 
             <button
               className={styles.btnPrimary}
-              disabled={!form.latitude}
+              disabled={!form.latitude && !form.description}
               onClick={() => setStep(2)}
             >
               Next
