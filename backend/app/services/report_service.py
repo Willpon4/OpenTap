@@ -12,6 +12,7 @@ from app.services.fountain_service import create_fountain_from_report
 from app.schemas.api import ReportCreate
 import httpx
 from app.core.sanitize import sanitize_text, sanitize_contact
+from app.core.encryption import encrypt_contact
 
 
 async def create_report(db: AsyncSession, data: ReportCreate) -> Report:
