@@ -113,6 +113,25 @@ export default function ReportDetailPage() {
                 <span className={styles.detailValue}>{report.description}</span>
               </div>
             )}
+            {report.photo_url && (
+              <div className={styles.detail}>
+                <span className={styles.detailLabel}>Photo</span>
+                <div>
+                  <img
+                    src={report.photo_url}
+                    alt="Report photo"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '400px',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      border: '1px solid var(--gray-200)',
+                      marginTop: '4px',
+                    }}
+                  />
+                </div>
+              </div>
+            )}
             <div className={styles.detail}>
               <span className={styles.detailLabel}>Location</span>
               <span className={styles.detailValue}>
