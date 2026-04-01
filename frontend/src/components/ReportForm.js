@@ -156,9 +156,13 @@ export default function ReportForm() {
               <label className={styles.label}>Or describe the location</label>
               <input
                 type="text"
-                placeholder='e.g. "Riverside Park near 79th St playground"'
+                placeholder='e.g. "Purcell Park, Harrisonburg VA"'
                 className={styles.input}
-                onChange={(e) => setForm(f => ({ ...f, description: e.target.value ? `Location: ${e.target.value}. ${f.description || ''}` : f.description }))}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setForm(f => ({ ...f, description: `Location: ${e.target.value}` }));
+                  }
+                }}
               />
             </div>
 
