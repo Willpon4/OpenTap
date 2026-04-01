@@ -37,6 +37,8 @@ export default function ReportForm() {
   const [locationStatus, setLocationStatus] = useState(
     form.latitude ? 'set' : 'idle'
   );
+  const [locationText, setLocationText] = useState('');
+  const [lookingUp, setLookingUp] = useState(false);
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
@@ -56,6 +58,34 @@ export default function ReportForm() {
       () => setLocationStatus('error'),
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  };
+
+  const lookUpLocation = async () => {
+    if (!locationText) return;
+    setLookingUp(true);
+    setError('');
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationText)}&format=json&limit=1`,
+        { headers: { 'User-Agent': 'OpenTap/0.1' } }
+      );
+      const data = await res.json();
+      if (data.length > 0) {
+        setForm(f => ({
+          ...f,
+          latitude: parseFloat(data[0].lat),
+          longitude: parseFloat(data[0].lon),
+          description: `Location: ${locationText}`,
+        }));
+        setLocationStatus('set');
+      } else {
+        setError('Could not find that location. Try a more specific address or place name.');
+      }
+    } catch {
+      setError('Could not look up location. Check your connection and try again.');
+    } finally {
+      setLookingUp(false);
+    }
   };
 
   useEffect(() => {
@@ -116,7 +146,6 @@ export default function ReportForm() {
           ))}
         </div>
 
-        {/* Step 1: Location */}
         {step === 1 && (
           <div className={styles.stepContent}>
             <h2 className={styles.stepTitle}>Where is the fountain?</h2>
@@ -135,14 +164,13 @@ export default function ReportForm() {
                   <circle cx="12" cy="10" r="3" />
                 </svg>
                 <span>Location set: {form.latitude.toFixed(4)}, {form.longitude.toFixed(4)}</span>
-                <button onClick={detectLocation} className={styles.linkBtn}>Update</button>
+                <button onClick={() => { setLocationStatus('idle'); setForm(f => ({ ...f, latitude: null, longitude: null })); }} className={styles.linkBtn}>Change</button>
               </div>
             )}
 
             {locationStatus === 'error' && (
               <div className={styles.locationError}>
-                <p>Could not detect location. Please enter coordinates or describe where the fountain is.</p>
-                <button onClick={detectLocation} className={styles.linkBtn}>Try again</button>
+                <p>Could not detect your location automatically. Type an address or place name below instead.</p>
               </div>
             )}
 
@@ -152,24 +180,38 @@ export default function ReportForm() {
               </button>
             )}
 
-            <div className={styles.manualLocation}>
-              <label className={styles.label}>Or describe the location</label>
-              <input
-                type="text"
-                placeholder='e.g. "Purcell Park, Harrisonburg VA"'
-                className={styles.input}
-                onChange={(e) => {
-                  if (e.target.value) {
-                    setForm(f => ({ ...f, description: `Location: ${e.target.value}` }));
-                  }
-                }}
-              />
-            </div>
+            {locationStatus !== 'set' && (
+              <div className={styles.manualLocation}>
+                <label className={styles.label}>Or type a place name or address</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder='e.g. "Purcell Park, Harrisonburg VA"'
+                    className={styles.input}
+                    value={locationText}
+                    onChange={(e) => setLocationText(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); lookUpLocation(); } }}
+                  />
+                  <button
+                    type="button"
+                    className={styles.btnSecondary}
+                    style={{ whiteSpace: 'nowrap' }}
+                    disabled={!locationText || lookingUp}
+                    onClick={lookUpLocation}
+                  >
+                    {lookingUp ? '...' : 'Look up'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {error && <div className={styles.error}>{error}</div>}
 
             <button
               className={styles.btnPrimary}
-              disabled={!form.latitude && !form.description}
-              onClick={() => setStep(2)}
+              disabled={!form.latitude}
+              onClick={() => { setError(''); setStep(2); }}
+              style={{ marginTop: '16px' }}
             >
               Next
             </button>
