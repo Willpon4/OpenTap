@@ -337,11 +337,11 @@ export default function ReportForm() {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.label}>Email or phone (optional)</label>
-              <p className={styles.hint}>We&apos;ll notify you when the status changes. Encrypted and never shared.</p>
+            <label className={styles.label}>Email (optional)</label>
+              <p className={styles.hint}>We&apos;ll email you when the status changes. Encrypted and never shared.</p>
               <input
-                type="text"
-                placeholder="email@example.com or +1 555-123-4567"
+                type="email"
+                placeholder="email@example.com"
                 className={styles.input}
                 value={form.reporter_contact || ''}
                 onChange={(e) => setForm(f => ({ ...f, reporter_contact: e.target.value }))}
